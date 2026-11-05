@@ -69,7 +69,7 @@ Feature-based subscription management for Laravel. Gateway-agnostic plans, featu
 
 ## Requirements
 
-- PHP 8.2+
+- PHP 8.2+ with the BCMath extension
 - Laravel 10.48+, 11, 12, or 13 (this branch is tested on 10.48.29)
 
 ## Installation
