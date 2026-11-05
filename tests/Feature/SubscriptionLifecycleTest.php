@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Event;
 use Revoltify\Subscriptionify\Enums\Interval;
 use Revoltify\Subscriptionify\Enums\SubscriptionStatus;
@@ -374,4 +375,17 @@ it('returns empty subscription info when not subscribed', function (): void {
 
     expect($info->planName)->toBe('')
         ->and($info->isActive())->toBeFalse();
+});
+
+it('rounds fractional remaining days consistently with Carbon 2', function (): void {
+    $this->travelTo(Carbon::parse('2026-11-05T12:00:00Z'));
+    $subscription = $this->user->subscribe($this->plan);
+    $subscription->update([
+        'status' => SubscriptionStatus::Trialing,
+        'ends_at' => now()->addDays(14)->subMinute(),
+        'trial_ends_at' => now()->addDays(14)->subMinute(),
+    ]);
+
+    expect($subscription->daysRemaining())->toBe(14)
+        ->and($subscription->trialDaysRemaining())->toBe(14);
 });

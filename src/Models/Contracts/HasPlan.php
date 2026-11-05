@@ -10,7 +10,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Revoltify\Subscriptionify\Enums\Interval;
 use Revoltify\Subscriptionify\Models\Feature;
-use Revoltify\Subscriptionify\Models\FeaturePlan;
 use Revoltify\Subscriptionify\Models\Subscription;
 
 /**
@@ -46,9 +45,9 @@ interface HasPlan
 
     public function calculateEndsAt(CarbonInterface $from): ?CarbonInterface;
 
-    /** @return BelongsToMany<Feature, $this&Model, FeaturePlan> */
+    /** @return BelongsToMany<Feature> */
     public function features(): BelongsToMany;
 
-    /** @return HasMany<Subscription, $this&Model> */
+    /** @return HasMany<Subscription> */
     public function subscriptions(): HasMany;
 }

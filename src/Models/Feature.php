@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Revoltify\Subscriptionify\Enums\FeatureType;
 use Revoltify\Subscriptionify\Models\Contracts\HasFeature;
 use Revoltify\Subscriptionify\Models\Contracts\HasFeaturePivot;
+use Revoltify\Subscriptionify\Support\Configuration;
 
 /**
  * @property int $id
@@ -33,13 +34,13 @@ class Feature extends Model implements HasFeature
 
     public function getTable(): string
     {
-        return config()->string('subscriptionify.tables.features', 'features');
+        return Configuration::string('subscriptionify.tables.features', 'features');
     }
 
-    /** @return BelongsToMany<Plan, $this, FeaturePlan> */
+    /** @return BelongsToMany<Plan> */
     public function plans(): BelongsToMany
     {
-        $table = config()->string('subscriptionify.tables.feature_plan', 'feature_plan');
+        $table = Configuration::string('subscriptionify.tables.feature_plan', 'feature_plan');
 
         /** @var class-string<Plan> $model */
         $model = config('subscriptionify.models.plan', Plan::class);
@@ -49,7 +50,7 @@ class Feature extends Model implements HasFeature
             ->withPivot(['value', 'unit_price', 'reset_period', 'reset_interval']);
     }
 
-    /** @return HasMany<FeatureUsage, $this> */
+    /** @return HasMany<FeatureUsage> */
     public function usages(): HasMany
     {
         return $this->hasMany(FeatureUsage::class);
@@ -109,12 +110,9 @@ class Feature extends Model implements HasFeature
         });
     }
 
-    /** @return array<string, string|class-string> */
-    protected function casts(): array
-    {
-        return [
-            'type' => FeatureType::class,
-            'sort_order' => 'integer',
-        ];
-    }
+    /** @var array<string, string|class-string> */
+    protected $casts = [
+        'type' => FeatureType::class,
+        'sort_order' => 'integer',
+    ];
 }

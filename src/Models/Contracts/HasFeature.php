@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace Revoltify\Subscriptionify\Models\Contracts;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Revoltify\Subscriptionify\Enums\FeatureType;
-use Revoltify\Subscriptionify\Models\FeaturePlan;
 use Revoltify\Subscriptionify\Models\FeatureUsage;
 use Revoltify\Subscriptionify\Models\Plan;
 
@@ -35,9 +33,9 @@ interface HasFeature
 
     public function isMetered(): bool;
 
-    /** @return BelongsToMany<Plan, $this&Model, FeaturePlan> */
+    /** @return BelongsToMany<Plan> */
     public function plans(): BelongsToMany;
 
-    /** @return HasMany<FeatureUsage, $this&Model> */
+    /** @return HasMany<FeatureUsage> */
     public function usages(): HasMany;
 }

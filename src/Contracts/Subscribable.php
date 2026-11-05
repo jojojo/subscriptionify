@@ -21,13 +21,13 @@ use Revoltify\Subscriptionify\Models\Subscription;
  */
 interface Subscribable
 {
-    /** @return MorphMany<Subscription, $this&Model> */
+    /** @return MorphMany<Subscription> */
     public function subscriptions(): MorphMany;
 
-    /** @return MorphMany<FeatureUsage, $this&Model> */
+    /** @return MorphMany<FeatureUsage> */
     public function featureUsages(): MorphMany;
 
-    /** @return MorphToMany<Feature, $this&Model> */
+    /** @return MorphToMany<Feature> */
     public function directFeatures(): MorphToMany;
 
     public function subscription(): ?HasSubscription;

@@ -13,6 +13,7 @@ use Revoltify\Subscriptionify\Models\Feature;
 use Revoltify\Subscriptionify\Models\FeatureSubscribable;
 use Revoltify\Subscriptionify\Models\FeatureUsage;
 use Revoltify\Subscriptionify\Models\Subscription;
+use Revoltify\Subscriptionify\Support\Configuration;
 
 trait HasSubscriptionRelationships
 {
@@ -31,7 +32,7 @@ trait HasSubscriptionRelationships
 
     public function directFeatures(): MorphToMany
     {
-        $table = config()->string('subscriptionify.tables.feature_subscribable', 'feature_subscribable');
+        $table = Configuration::string('subscriptionify.tables.feature_subscribable', 'feature_subscribable');
 
         /** @var class-string<Feature> $model */
         $model = config('subscriptionify.models.feature', Feature::class);

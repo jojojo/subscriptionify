@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Revoltify\Subscriptionify\Enums\Interval;
 use Revoltify\Subscriptionify\Models\Contracts\HasFeaturePivot;
+use Revoltify\Subscriptionify\Support\Configuration;
 
 /**
  * @property int $plan_id
@@ -33,10 +34,10 @@ final class FeaturePlan extends Pivot implements HasFeaturePivot
 
     public function getTable(): string
     {
-        return config()->string('subscriptionify.tables.feature_plan', 'feature_plan');
+        return Configuration::string('subscriptionify.tables.feature_plan', 'feature_plan');
     }
 
-    /** @return BelongsTo<Plan, $this> */
+    /** @return BelongsTo<Plan, self> */
     public function plan(): BelongsTo
     {
         /** @var class-string<Plan> $model */
@@ -45,7 +46,7 @@ final class FeaturePlan extends Pivot implements HasFeaturePivot
         return $this->belongsTo($model);
     }
 
-    /** @return BelongsTo<Feature, $this> */
+    /** @return BelongsTo<Feature, self> */
     public function feature(): BelongsTo
     {
         /** @var class-string<Feature> $model */
@@ -85,14 +86,11 @@ final class FeaturePlan extends Pivot implements HasFeaturePivot
         return $this->reset_interval;
     }
 
-    /** @return array<string, string|class-string> */
-    protected function casts(): array
-    {
-        return [
-            'value' => 'string',
-            'unit_price' => 'decimal:8',
-            'reset_period' => 'integer',
-            'reset_interval' => Interval::class,
-        ];
-    }
+    /** @var array<string, string|class-string> */
+    protected $casts = [
+        'value' => 'string',
+        'unit_price' => 'decimal:8',
+        'reset_period' => 'integer',
+        'reset_interval' => Interval::class,
+    ];
 }

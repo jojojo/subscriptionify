@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Revoltify\Subscriptionify\Models;
 
 use Carbon\CarbonInterface;
-use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -14,6 +13,7 @@ use LogicException;
 use Revoltify\Subscriptionify\Enums\Interval;
 use Revoltify\Subscriptionify\Enums\SubscriptionStatus;
 use Revoltify\Subscriptionify\Models\Contracts\HasPlan;
+use Revoltify\Subscriptionify\Support\Configuration;
 
 /**
  * @property int $id
@@ -57,13 +57,13 @@ class Plan extends Model implements HasPlan
 
     public function getTable(): string
     {
-        return config()->string('subscriptionify.tables.plans', 'plans');
+        return Configuration::string('subscriptionify.tables.plans', 'plans');
     }
 
-    /** @return BelongsToMany<Feature, $this, FeaturePlan> */
+    /** @return BelongsToMany<Feature> */
     public function features(): BelongsToMany
     {
-        $table = config()->string('subscriptionify.tables.feature_plan', 'feature_plan');
+        $table = Configuration::string('subscriptionify.tables.feature_plan', 'feature_plan');
 
         /** @var class-string<Feature> $model */
         $model = config('subscriptionify.models.feature', Feature::class);
@@ -73,7 +73,7 @@ class Plan extends Model implements HasPlan
             ->withPivot(['value', 'unit_price', 'reset_period', 'reset_interval']);
     }
 
-    /** @return HasMany<Subscription, $this> */
+    /** @return HasMany<Subscription> */
     public function subscriptions(): HasMany
     {
         /** @var class-string<Subscription> $model */
@@ -172,23 +172,19 @@ class Plan extends Model implements HasPlan
      * @param  Builder<static>  $query
      * @return Builder<static>
      */
-    #[Scope]
-    protected function active(Builder $query): Builder
+    public function scopeActive(Builder $query): Builder
     {
         return $query->where('is_active', true);
     }
 
-    /** @return array<string, string|class-string> */
-    protected function casts(): array
-    {
-        return [
-            'is_free' => 'boolean',
-            'is_active' => 'boolean',
-            'trial_days' => 'integer',
-            'billing_period' => 'integer',
-            'billing_interval' => Interval::class,
-            'grace_days' => 'integer',
-            'sort_order' => 'integer',
-        ];
-    }
+    /** @var array<string, string|class-string> */
+    protected $casts = [
+        'is_free' => 'boolean',
+        'is_active' => 'boolean',
+        'trial_days' => 'integer',
+        'billing_period' => 'integer',
+        'billing_interval' => Interval::class,
+        'grace_days' => 'integer',
+        'sort_order' => 'integer',
+    ];
 }

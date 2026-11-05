@@ -32,7 +32,8 @@ jobs:
           restore-keys: format-php-8.2-composer-
 
       - name: Install Composer dependencies
-        run: composer update --no-interaction --prefer-dist
+        # Legacy framework is pinned for compatibility tests; Composer still reports its advisories.
+        run: composer update --no-interaction --prefer-dist --no-security-blocking
 
       - name: Check code style
         run: vendor/bin/pint --test

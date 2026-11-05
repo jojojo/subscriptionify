@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\MorphPivot;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Revoltify\Subscriptionify\Enums\Interval;
 use Revoltify\Subscriptionify\Models\Contracts\HasFeaturePivot;
+use Revoltify\Subscriptionify\Support\Configuration;
 
 /**
  * @property int $id
@@ -37,16 +38,16 @@ final class FeatureSubscribable extends MorphPivot implements HasFeaturePivot
 
     public function getTable(): string
     {
-        return config()->string('subscriptionify.tables.feature_subscribable', 'feature_subscribable');
+        return Configuration::string('subscriptionify.tables.feature_subscribable', 'feature_subscribable');
     }
 
-    /** @return BelongsTo<Feature, $this> */
+    /** @return BelongsTo<Feature, self> */
     public function feature(): BelongsTo
     {
         return $this->belongsTo(Feature::class);
     }
 
-    /** @return MorphTo<Model, $this> */
+    /** @return MorphTo<Model, self> */
     public function subscribable(): MorphTo
     {
         return $this->morphTo();
@@ -83,14 +84,11 @@ final class FeatureSubscribable extends MorphPivot implements HasFeaturePivot
         return $this->reset_interval;
     }
 
-    /** @return array<string, string|class-string> */
-    protected function casts(): array
-    {
-        return [
-            'value' => 'string',
-            'unit_price' => 'decimal:8',
-            'reset_period' => 'integer',
-            'reset_interval' => Interval::class,
-        ];
-    }
+    /** @var array<string, string|class-string> */
+    protected $casts = [
+        'value' => 'string',
+        'unit_price' => 'decimal:8',
+        'reset_period' => 'integer',
+        'reset_interval' => Interval::class,
+    ];
 }

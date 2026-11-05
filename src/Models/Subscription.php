@@ -13,6 +13,7 @@ use Revoltify\Subscriptionify\Enums\SubscriptionStatus;
 use Revoltify\Subscriptionify\Models\Concerns\ManagesSubscriptionLifecycle;
 use Revoltify\Subscriptionify\Models\Contracts\HasPlan;
 use Revoltify\Subscriptionify\Models\Contracts\HasSubscription;
+use Revoltify\Subscriptionify\Support\Configuration;
 
 /**
  * @property int $id
@@ -45,13 +46,16 @@ class Subscription extends Model implements HasSubscription
 
     public function getTable(): string
     {
-        return config()->string('subscriptionify.tables.subscriptions', 'subscriptions');
+        return Configuration::string('subscriptionify.tables.subscriptions', 'subscriptions');
     }
 
     /** @return MorphTo<Model, $this> */
     public function subscribable(): MorphTo
     {
-        return $this->morphTo();
+        /** @var MorphTo<Model, $this> $relation */
+        $relation = $this->morphTo();
+
+        return $relation;
     }
 
     /** @return BelongsTo<Plan, $this> */
@@ -60,7 +64,10 @@ class Subscription extends Model implements HasSubscription
         /** @var class-string<Plan> $model */
         $model = config('subscriptionify.models.plan', Plan::class);
 
-        return $this->belongsTo($model);
+        /** @var BelongsTo<Plan, $this> $relation */
+        $relation = $this->belongsTo($model);
+
+        return $relation;
     }
 
     public function getStatus(): SubscriptionStatus
@@ -178,7 +185,7 @@ class Subscription extends Model implements HasSubscription
             return 0;
         }
 
-        return max(0, (int) round(now()->diffInDays($this->ends_at, false)));
+        return max(0, (int) round(now()->floatDiffInDays($this->ends_at, false)));
     }
 
     public function trialDaysRemaining(): int
@@ -187,19 +194,16 @@ class Subscription extends Model implements HasSubscription
             return 0;
         }
 
-        return max(0, (int) round(now()->diffInDays($this->trial_ends_at, false)));
+        return max(0, (int) round(now()->floatDiffInDays($this->trial_ends_at, false)));
     }
 
-    /** @return array<string, string|class-string> */
-    protected function casts(): array
-    {
-        return [
-            'status' => SubscriptionStatus::class,
-            'starts_at' => 'datetime',
-            'ends_at' => 'datetime',
-            'trial_ends_at' => 'datetime',
-            'cancelled_at' => 'datetime',
-            'renewed_at' => 'datetime',
-        ];
-    }
+    /** @var array<string, string|class-string> */
+    protected $casts = [
+        'status' => SubscriptionStatus::class,
+        'starts_at' => 'datetime',
+        'ends_at' => 'datetime',
+        'trial_ends_at' => 'datetime',
+        'cancelled_at' => 'datetime',
+        'renewed_at' => 'datetime',
+    ];
 }

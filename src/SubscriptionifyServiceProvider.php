@@ -47,14 +47,14 @@ final class SubscriptionifyServiceProvider extends ServiceProvider
 
     private function publishMigrations(): void
     {
-        $this->publishesMigrations([
+        $this->publishes([
             __DIR__.'/../database/migrations' => database_path('migrations'),
         ], 'subscriptionify-migrations');
     }
 
     private function registerMiddleware(): void
     {
-        $config = config()->array('subscriptionify.middleware', []);
+        $config = (array) config('subscriptionify.middleware', []);
 
         Route::aliasMiddleware(
             is_string($config['subscribed'] ?? null) ? $config['subscribed'] : 'subscribed',

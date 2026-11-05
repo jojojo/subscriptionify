@@ -6,6 +6,7 @@ use Rector\Caching\ValueObject\Storage\FileCacheStorage;
 use Rector\CodingStyle\Rector\ClassMethod\MakeInheritedMethodVisibilitySameAsParentRector;
 use Rector\Config\RectorConfig;
 use Rector\Php83\Rector\ClassMethod\AddOverrideAttributeToOverriddenMethodsRector;
+use RectorLaravel\Rector\If_\ThrowIfRector;
 use RectorLaravel\Set\LaravelSetList;
 
 return RectorConfig::configure()
@@ -34,6 +35,8 @@ return RectorConfig::configure()
     ])
     ->withSkip([
         AddOverrideAttributeToOverriddenMethodsRector::class,
+        // Preserve upstream exception style with the Laravel 10-compatible Rector toolchain.
+        ThrowIfRector::class,
         MakeInheritedMethodVisibilitySameAsParentRector::class,
     ])
     ->withPreparedSets(

@@ -1,5 +1,39 @@
 # Subscriptionify
 
+> **Temporary Laravel 10 compatibility fork** — branch `laravel-10` of
+> [jojojo/subscriptionify](https://github.com/jojojo/subscriptionify/tree/laravel-10).
+> Upstream: [revoltify/subscriptionify](https://github.com/revoltify/subscriptionify).
+> Validated with PHP 8.2 and Laravel **10.48.29**. This branch backports model casts,
+> query scopes, configuration reads, migration publishing and Carbon 2 date calculations.
+> Application-specific licensing rules and integrations remain outside this package.
+
+### Using the Laravel 10 branch
+
+Add the fork as a Composer VCS repository and require `revoltify/subscriptionify`
+with version `dev-laravel-10`. Keep the upstream package name. Pin the selected
+commit in your application's lockfile. No application has been migrated to this
+fork automatically.
+
+The development dependency fixes Laravel to 10.48.29 so the tests exercise that
+version rather than resolving a newer framework. In an isolated development copy:
+
+```sh
+composer update --no-interaction --prefer-dist --no-security-blocking
+composer test
+composer audit
+```
+
+`--no-security-blocking` is used **only for the legacy compatibility test environment**:
+Composer reports existing advisories against Laravel 10.48.29. This fork does not
+patch Laravel or certify it free of vulnerabilities. No global Composer security
+setting is changed, and application installations retain their own Composer policy.
+
+Runtime constraints continue to allow newer Laravel versions, but this branch's
+CI targets PHP 8.2 / Laravel 10.48.29. Return to upstream after the application's
+Laravel upgrade; the compatibility changes are kept separate from business logic.
+
+---
+
 [![Tests](https://github.com/revoltify/subscriptionify/actions/workflows/run-tests.yml/badge.svg)](https://github.com/revoltify/subscriptionify/actions/workflows/run-tests.yml)
 [![Laravel](https://img.shields.io/badge/Laravel-11%2B-red.svg)](https://laravel.com/)
 [![PHP](https://img.shields.io/badge/PHP-8.2%2B-blue.svg)](https://www.php.net/)
@@ -36,7 +70,7 @@ Feature-based subscription management for Laravel. Gateway-agnostic plans, featu
 ## Requirements
 
 - PHP 8.2+
-- Laravel 11, 12, or 13
+- Laravel 10.48+, 11, 12, or 13 (this branch is tested on 10.48.29)
 
 ## Installation
 

@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Revoltify\Subscriptionify\Support\Configuration;
 
 /**
  * @property int $id
@@ -34,16 +35,16 @@ final class FeatureUsage extends Model
 
     public function getTable(): string
     {
-        return config()->string('subscriptionify.tables.feature_usages', 'feature_usages');
+        return Configuration::string('subscriptionify.tables.feature_usages', 'feature_usages');
     }
 
-    /** @return MorphTo<Model, $this> */
+    /** @return MorphTo<Model, self> */
     public function subscribable(): MorphTo
     {
         return $this->morphTo();
     }
 
-    /** @return BelongsTo<Feature, $this> */
+    /** @return BelongsTo<Feature, self> */
     public function feature(): BelongsTo
     {
         /** @var class-string<Feature> $model */
@@ -83,14 +84,11 @@ final class FeatureUsage extends Model
         return $this->expired() ? '0' : $this->overage;
     }
 
-    /** @return array<string, string> */
-    protected function casts(): array
-    {
-        return [
-            'used' => 'string',
-            'overage' => 'string',
-            'valid_until' => 'datetime',
-            'last_reset_at' => 'datetime',
-        ];
-    }
+    /** @var array<string, string> */
+    protected $casts = [
+        'used' => 'string',
+        'overage' => 'string',
+        'valid_until' => 'datetime',
+        'last_reset_at' => 'datetime',
+    ];
 }
