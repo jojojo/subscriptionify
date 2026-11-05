@@ -13,18 +13,19 @@ return new class extends Migration
         $table = config('subscriptionify.tables.feature_subscribable', 'feature_subscribable');
 
         if (! Schema::hasTable($table)) {
-            Schema::create($table, function (Blueprint $table): void {
+            $subjectIndex = 'subscriptionify_'.substr(sha1((string) $table), 0, 16).'_subject_index';
+            Schema::create($table, function (Blueprint $table) use ($subjectIndex): void {
                 $table->id();
                 $table->foreignId('feature_id');
-                $table->morphs('subscribable');
+                $table->morphs('subscribable', $subjectIndex);
                 $table->string('value')->default('0');
                 $table->decimal('unit_price', 16, 8)->default(0);
                 $table->unsignedInteger('reset_period')->nullable();
                 $table->string('reset_interval')->nullable();
                 $table->timestamps();
 
-                $table->unique(['feature_id', 'subscribable_type', 'subscribable_id'], 'feature_subscribable_unique');
-                $table->index('feature_id', 'feature_subscribable_feature_id_index');
+                $table->unique(['feature_id', 'subscribable_type', 'subscribable_id'], str_replace('_subject_index', '_feature_unique', $subjectIndex));
+                $table->index('feature_id', str_replace('_subject_index', '_feature_index', $subjectIndex));
             });
         }
     }

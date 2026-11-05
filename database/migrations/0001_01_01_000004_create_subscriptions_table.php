@@ -13,9 +13,10 @@ return new class extends Migration
         $table = config('subscriptionify.tables.subscriptions', 'subscriptions');
 
         if (! Schema::hasTable($table)) {
-            Schema::create($table, function (Blueprint $table): void {
+            $subjectIndex = 'subscriptionify_'.substr(sha1((string) $table), 0, 16).'_subject_index';
+            Schema::create($table, function (Blueprint $table) use ($subjectIndex): void {
                 $table->id();
-                $table->morphs('subscribable');
+                $table->morphs('subscribable', $subjectIndex);
                 $table->foreignId('plan_id');
                 $table->string('status')->default('active');
                 $table->timestamp('starts_at');
@@ -25,7 +26,7 @@ return new class extends Migration
                 $table->timestamp('renewed_at')->nullable();
                 $table->timestamps();
 
-                $table->index(['subscribable_type', 'subscribable_id', 'status']);
+                $table->index(['subscribable_type', 'subscribable_id', 'status'], str_replace('_subject_index', '_status_index', $subjectIndex));
                 $table->index('plan_id');
                 $table->index('status');
             });
